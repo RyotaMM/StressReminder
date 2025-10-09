@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BD4B4DC82DB4EE6000A40095 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = BD4B4DC72DB4EE6000A40095 /* FSCalendar */; };
+		BD67B4892DB508CF002AD73F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = BD67B4882DB508CF002AD73F /* DGCharts */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		BD4B4D9C2DB27D8800A40095 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -22,6 +27,19 @@
 			remoteInfo = stressReminder;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BD4B4DD92DB505EE00A40095 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		BD4B4D852DB27D8500A40095 /* stressReminder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = stressReminder.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +83,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD67B4892DB508CF002AD73F /* DGCharts in Frameworks */,
+				BD4B4DC82DB4EE6000A40095 /* FSCalendar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,6 +111,7 @@
 				BD4B4D872DB27D8500A40095 /* stressReminder */,
 				BD4B4D9E2DB27D8800A40095 /* stressReminderTests */,
 				BD4B4DA82DB27D8800A40095 /* stressReminderUITests */,
+				BD4B4DC62DB4EE6000A40095 /* Frameworks */,
 				BD4B4D862DB27D8500A40095 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -105,6 +126,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		BD4B4DC62DB4EE6000A40095 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -115,6 +143,7 @@
 				BD4B4D812DB27D8500A40095 /* Sources */,
 				BD4B4D822DB27D8500A40095 /* Frameworks */,
 				BD4B4D832DB27D8500A40095 /* Resources */,
+				BD4B4DD92DB505EE00A40095 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -125,6 +154,8 @@
 			);
 			name = stressReminder;
 			packageProductDependencies = (
+				BD4B4DC72DB4EE6000A40095 /* FSCalendar */,
+				BD67B4882DB508CF002AD73F /* DGCharts */,
 			);
 			productName = stressReminder;
 			productReference = BD4B4D852DB27D8500A40095 /* stressReminder.app */;
@@ -208,6 +239,10 @@
 			);
 			mainGroup = BD4B4D7C2DB27D8500A40095;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BD4B4DC52DB4ECC500A40095 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				BD67B4872DB508CA002AD73F /* XCRemoteSwiftPackageReference "Charts" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BD4B4D862DB27D8500A40095 /* Products */;
 			projectDirPath = "";
@@ -292,11 +327,14 @@
 				DEVELOPMENT_TEAM = S43LT6ALXC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = stressReminder/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "ストレスリマインダー";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIMainStoryboardFile = "";
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -320,11 +358,14 @@
 				DEVELOPMENT_TEAM = S43LT6ALXC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = stressReminder/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "ストレスリマインダー";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIMainStoryboardFile = "";
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -571,6 +612,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BD4B4DC52DB4ECC500A40095 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.4;
+			};
+		};
+		BD67B4872DB508CA002AD73F /* XCRemoteSwiftPackageReference "Charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/danielgindi/Charts.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BD4B4DC72DB4EE6000A40095 /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD4B4DC52DB4ECC500A40095 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
+		};
+		BD67B4882DB508CF002AD73F /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD67B4872DB508CA002AD73F /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BD4B4D7D2DB27D8500A40095 /* Project object */;
 }
