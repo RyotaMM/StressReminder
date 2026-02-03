@@ -92,6 +92,11 @@ class StressDetailViewController: UIViewController, UITextViewDelegate {
         setupActions()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsManager.shared.logScreenView(screenName: "StressDetailView")
+    }
+    
     private func setupViews() {
         // UI要素の追加
         view.addSubview(dateLabel)
@@ -218,6 +223,12 @@ class StressDetailViewController: UIViewController, UITextViewDelegate {
             self.navigationController?.popViewController(animated: true)
         }))
         present(alert, animated: true)
+        
+        let timeToResolve = Date().timeIntervalSince(entry.date)
+            AnalyticsManager.shared.logSolutionAddedToStress(
+                stressLevel: entry.level,
+                timeToResolve: timeToResolve
+            )
     }
 
     

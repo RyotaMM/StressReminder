@@ -79,6 +79,11 @@ class StatsViewController: UIViewController {
         updateChart()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsManager.shared.logScreenView(screenName: "StatsView")
+    }
+    
     private func registerForNotifications() {
         NotificationCenter.default.addObserver(
             self,
@@ -124,6 +129,23 @@ class StatsViewController: UIViewController {
     }
     
     @objc private func segmentChanged(_ sender: UISegmentedControl) {
+        // セグメント切り替え時にイベント送信
+        let viewType: String
+        switch sender.selectedSegmentIndex {
+        case 0:
+            viewType = "weekly"
+        case 1:
+            viewType = "monthly"
+        case 2:
+            viewType = "level_breakdown"
+        default:
+            viewType = "unknown"
+        }
+        
+        // ⭐ 統計表示タイプ変更イベント
+        AnalyticsManager.shared.logStatsViewChanged(viewType: viewType)
+        
+        // 既存の更新処理
         updateChart()
     }
     
@@ -145,6 +167,14 @@ class StatsViewController: UIViewController {
         default:
             break
         }
+        let totalStress = stressManager.stressEntries().count
+        let totalSolutions = stressManager.solutionEntries().count
+            
+            AnalyticsManager.shared.logStatsViewed(
+                totalStress: totalStress,
+                totalSolutions: totalSolutions,
+                period: segmentedControl.selectedSegmentIndex == 0 ? "weekly" : "monthly"
+            )
     }
     
     private func updateWeeklyChart() {
@@ -199,7 +229,9 @@ class StatsViewController: UIViewController {
         // ステータスラベルの更新
         let totalStress = stressEntries.reduce(0) { $0 + $1.y }
         let totalSolution = solutionEntries.reduce(0) { $0 + $1.y }
+        
         statusLabel.text = "過去7日間: ストレス \(Int(totalStress))件, 解決策 \(Int(totalSolution))件"
+        
     }
     
     private func updateMonthlyChart() {

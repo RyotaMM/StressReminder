@@ -7,15 +7,27 @@
 
 import UIKit
 import UserNotifications
+import FirebaseCore  // Firebase初期化に必要
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        // ⭐ Firebase初期化（最初に実行）
+        FirebaseApp.configure()
+        print("✅ Firebase初期化完了")
+        
+        // ⭐ アプリ起動イベントを記録
+        AnalyticsManager.shared.logAppLaunched()
+        
+        // ⭐ ログイン中のユーザーIDを設定
+        if let userID = AuthManager.shared.currentUserID {
+            AnalyticsManager.shared.setUserID(userID)
+        }
+        
         // 通知デリゲートの設定
         UNUserNotificationCenter.current().delegate = self
-        
-        
         
         // アプリの外観設定
         setupAppearance()
@@ -34,8 +46,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         
         // ダークモード設定の適用
         applyDarkModeSettings()
-        
-        
     }
     
     private func applyDarkModeSettings() {

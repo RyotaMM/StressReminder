@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BD05BF382F32604E001E3B08 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = BD05BF372F32604E001E3B08 /* FirebaseAuth */; };
+		BD05BF3A2F32604E001E3B08 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = BD05BF392F32604E001E3B08 /* FirebaseFirestore */; };
+		BD05BF4C2F32743D001E3B08 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = BD05BF4B2F32743D001E3B08 /* FirebaseAnalytics */; };
 		BD4B4DC82DB4EE6000A40095 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = BD4B4DC72DB4EE6000A40095 /* FSCalendar */; };
 		BD67B4892DB508CF002AD73F /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = BD67B4882DB508CF002AD73F /* DGCharts */; };
 /* End PBXBuildFile section */
@@ -84,6 +87,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				BD67B4892DB508CF002AD73F /* DGCharts in Frameworks */,
+				BD05BF3A2F32604E001E3B08 /* FirebaseFirestore in Frameworks */,
+				BD05BF382F32604E001E3B08 /* FirebaseAuth in Frameworks */,
+				BD05BF4C2F32743D001E3B08 /* FirebaseAnalytics in Frameworks */,
 				BD4B4DC82DB4EE6000A40095 /* FSCalendar in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -156,6 +162,9 @@
 			packageProductDependencies = (
 				BD4B4DC72DB4EE6000A40095 /* FSCalendar */,
 				BD67B4882DB508CF002AD73F /* DGCharts */,
+				BD05BF372F32604E001E3B08 /* FirebaseAuth */,
+				BD05BF392F32604E001E3B08 /* FirebaseFirestore */,
+				BD05BF4B2F32743D001E3B08 /* FirebaseAnalytics */,
 			);
 			productName = stressReminder;
 			productReference = BD4B4D852DB27D8500A40095 /* stressReminder.app */;
@@ -242,6 +251,7 @@
 			packageReferences = (
 				BD4B4DC52DB4ECC500A40095 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				BD67B4872DB508CA002AD73F /* XCRemoteSwiftPackageReference "Charts" */,
+				BD05BF362F325E6B001E3B08 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BD4B4D862DB27D8500A40095 /* Products */;
@@ -614,6 +624,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		BD05BF362F325E6B001E3B08 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
 		BD4B4DC52DB4ECC500A40095 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
@@ -633,6 +651,21 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		BD05BF372F32604E001E3B08 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD05BF362F325E6B001E3B08 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		BD05BF392F32604E001E3B08 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD05BF362F325E6B001E3B08 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		BD05BF4B2F32743D001E3B08 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD05BF362F325E6B001E3B08 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
 		BD4B4DC72DB4EE6000A40095 /* FSCalendar */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BD4B4DC52DB4ECC500A40095 /* XCRemoteSwiftPackageReference "FSCalendar" */;

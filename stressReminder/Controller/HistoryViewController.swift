@@ -43,6 +43,11 @@ class HistoryViewController: UIViewController {
         updateCalendar()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsManager.shared.logScreenView(screenName: "HistoryView")
+    }
+    
     private func registerForNotifications() {
         NotificationCenter.default.addObserver(
             self,

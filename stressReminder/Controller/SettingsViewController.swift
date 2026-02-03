@@ -12,17 +12,20 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     private let notificationManager = NotificationManager.shared
     private let stressManager = StressManager.shared
+    private let analyticsManager = AnalyticsManager.shared  // ⭐ 追加
     
     private let tableView: UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
         table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         table.register(SwitchTableViewCell.self, forCellReuseIdentifier: "switchCell")
+        table.register(TimePickerTableViewCell.self, forCellReuseIdentifier: "timePickerCell")
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()
     
     // 設定項目のセクション
     private enum Section: Int, CaseIterable {
+        case account       // ⭐ 追加
         case notifications
         case appearance
         case data
@@ -30,10 +33,26 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         var title: String {
             switch self {
+            case .account: return "アカウント"       // ⭐ 追加
             case .notifications: return "通知"
             case .appearance: return "表示設定"
             case .data: return "データ管理"
             case .about: return "アプリについて"
+            }
+        }
+    }
+    
+    // ⭐ アカウントセクションの項目を追加
+    private enum AccountOption: Int, CaseIterable {
+        case userInfo
+        case logout
+        case deleteAccount
+        
+        var title: String {
+            switch self {
+            case .userInfo: return "ユーザー情報"
+            case .logout: return "ログアウト"
+            case .deleteAccount: return "アカウント削除"
             }
         }
     }
@@ -114,6 +133,12 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         loadSettings()
     }
     
+    // ⭐ 追加
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analyticsManager.logScreenView(screenName: "SettingsView", screenClass: "SettingsViewController")
+    }
+    
     private func setupTableView() {
         view.addSubview(tableView)
         
@@ -153,6 +178,7 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         guard let sectionType = Section(rawValue: section) else { return 0 }
         
         switch sectionType {
+        case .account: return AccountOption.allCases.count  // ⭐ 追加
         case .notifications: return NotificationOption.allCases.count
         case .appearance: return AppearanceOption.allCases.count
         case .data: return DataOption.allCases.count
@@ -171,6 +197,28 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         }
         
         switch section {
+        case .account:  // ⭐ 追加
+            guard let option = AccountOption(rawValue: indexPath.row) else {
+                return UITableViewCell()
+            }
+            
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+            cell.textLabel?.text = option.title
+            
+            switch option {
+            case .userInfo:
+                cell.accessoryType = .disclosureIndicator
+                cell.textLabel?.textColor = .label
+            case .logout:
+                cell.accessoryType = .none
+                cell.textLabel?.textColor = .systemBlue
+            case .deleteAccount:
+                cell.accessoryType = .none
+                cell.textLabel?.textColor = .systemRed
+            }
+            
+            return cell
+            
         case .notifications:
             guard let option = NotificationOption(rawValue: indexPath.row) else {
                 return UITableViewCell()
@@ -180,6 +228,12 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
             cell.configure(title: option.title, isOn: notificationSettings[option] ?? false) { [weak self] isOn in
                 self?.notificationSettings[option] = isOn
                 UserDefaults.standard.set(isOn, forKey: "\(option)Enabled")
+                
+                // ⭐ 通知設定変更イベント
+                self?.analyticsManager.logNotificationSettingChanged(
+                    type: option.title,
+                    enabled: isOn
+                )
                 
                 if isOn {
                     self?.showTimePickerForNotification(option)
@@ -207,6 +261,10 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
                 let cell = tableView.dequeueReusableCell(withIdentifier: "switchCell", for: indexPath) as! SwitchTableViewCell
                 cell.configure(title: option.title, isOn: darkModeEnabled) { [weak self] isOn in
                     self?.darkModeEnabled = isOn
+                    
+                    // ⭐ ダークモード切り替えイベント
+                    self?.analyticsManager.logDarkModeToggled(enabled: isOn)
+                    
                     self?.applyDarkModeSettings()
                 }
                 return cell
@@ -258,6 +316,18 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         guard let section = Section(rawValue: indexPath.section) else { return }
         
         switch section {
+        case .account:  // ⭐ 追加
+            guard let option = AccountOption(rawValue: indexPath.row) else { return }
+            
+            switch option {
+            case .userInfo:
+                showUserInfo()
+            case .logout:
+                showLogoutConfirmation()
+            case .deleteAccount:
+                showDeleteAccountConfirmation()
+            }
+            
         case .notifications:
             guard let option = NotificationOption(rawValue: indexPath.row),
                   notificationSettings[option] == true else { return }
@@ -287,16 +357,118 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel))
         alert.addAction(UIAlertAction(title: "削除", style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            
+            // ⭐ 削除前のエントリー数を記録
+            let entryCount = self.stressManager.entries.count
+            
             // ストレスマネージャーを使ってデータを削除
-            self?.stressManager.deleteAllEntries()
+            self.stressManager.deleteAllEntries()
+            
+            // ⭐ データ削除イベント
+            self.analyticsManager.logDataDeleted(entryCount: entryCount)
             
             // 完了メッセージ
             let confirmAlert = UIAlertController(title: "完了", message: "すべてのデータが削除されました", preferredStyle: .alert)
             confirmAlert.addAction(UIAlertAction(title: "OK", style: .default))
-            self?.present(confirmAlert, animated: true)
+            self.present(confirmAlert, animated: true)
         })
         
         present(alert, animated: true)
+    }
+    
+    // ⭐ 以下のメソッドを追加
+    
+    // MARK: - Account Methods
+    
+    private func showUserInfo() {
+        guard let user = AuthManager.shared.currentUser else { return }
+        
+        let message = """
+        メールアドレス: \(user.email)
+        表示名: \(user.displayName ?? "未設定")
+        ユーザーID: \(user.uid)
+        """
+        
+        let alert = UIAlertController(title: "ユーザー情報", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    private func showLogoutConfirmation() {
+        let alert = UIAlertController(
+            title: "ログアウト",
+            message: "ログアウトしますか？",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel))
+        alert.addAction(UIAlertAction(title: "ログアウト", style: .destructive) { [weak self] _ in
+            self?.performLogout()
+        })
+        
+        present(alert, animated: true)
+    }
+    
+    private func performLogout() {
+        // ⭐ ログアウトイベント
+        analyticsManager.logLogout()
+        
+        AuthManager.shared.signOut { [weak self] success in
+            if success {
+                // ログイン画面に戻る
+                if let sceneDelegate = self?.view.window?.windowScene?.delegate as? SceneDelegate {
+                    sceneDelegate.showLoginScreen()
+                }
+            } else {
+                let alert = UIAlertController(
+                    title: "エラー",
+                    message: "ログアウトに失敗しました",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self?.present(alert, animated: true)
+            }
+        }
+    }
+    
+    private func showDeleteAccountConfirmation() {
+        let alert = UIAlertController(
+            title: "アカウント削除",
+            message: "アカウントとすべてのデータが完全に削除されます。この操作は元に戻せません。本当に削除しますか？",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "キャンセル", style: .cancel))
+        alert.addAction(UIAlertAction(title: "削除", style: .destructive) { [weak self] _ in
+            self?.performDeleteAccount()
+        })
+        
+        present(alert, animated: true)
+    }
+    
+    private func performDeleteAccount() {
+        AuthManager.shared.deleteAccount { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    // アカウント削除成功 → ログイン画面に戻る
+                    if let sceneDelegate = self?.view.window?.windowScene?.delegate as? SceneDelegate {
+                        sceneDelegate.showLoginScreen()
+                    }
+                    
+                case .failure(let error):
+                    // エラー処理
+                    let alert = UIAlertController(
+                        title: "削除エラー",
+                        message: error.localizedDescription,
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self?.present(alert, animated: true)
+                }
+            }
+        }
     }
     
     
@@ -384,6 +556,9 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         alert.addAction(UIAlertAction(title: "メールで送信", style: .default) { [weak self] _ in
             guard let self = self else { return }
             
+            // ⭐ フィードバック送信イベント
+            self.analyticsManager.logFeedbackSent(method: "email")
+            
             if MFMailComposeViewController.canSendMail() {
                 let mail = MFMailComposeViewController()
                 mail.mailComposeDelegate = self
@@ -398,7 +573,10 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
             }
         })
         
-        alert.addAction(UIAlertAction(title: "レビューを書く", style: .default) { _ in
+        alert.addAction(UIAlertAction(title: "レビューを書く", style: .default) { [weak self] _ in
+            // ⭐ フィードバック送信イベント
+            self?.analyticsManager.logFeedbackSent(method: "app_store_review")
+            
             if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                let url = URL(string: "https://apps.apple.com/app/6745258554?action=write-review") {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -461,5 +639,57 @@ class SwitchTableViewCell: UITableViewCell {
     
     @objc private func switchValueChanged() {
         switchCallback?(switchControl.isOn)
+    }
+}
+
+// MARK: - TimePickerTableViewCell
+class TimePickerTableViewCell: UITableViewCell {
+    
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let timeLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }()
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupViews()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupViews() {
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(timeLabel)
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            timeLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
+    }
+    
+    func configure(title: String, time: Date) {
+        titleLabel.text = title
+        timeLabel.text = timeFormatter.string(from: time)
     }
 }

@@ -18,7 +18,43 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-
+        self.window = window
+        
+        // ⭐ ログイン状態をチェックして画面を切り替え
+        if AuthManager.shared.isLoggedIn {
+            // ログイン済み → メイン画面
+            showMainScreen()
+        } else {
+            // 未ログイン → ログイン画面
+            showLoginScreen()
+        }
+        
+        window.makeKeyAndVisible()
+        
+        // アプリ起動時にユーザー通知の許可をリクエスト
+        requestNotificationPermission()
+        
+        // 初回起動時の処理
+        performFirstLaunchSetup()
+    }
+    
+    // MARK: - Screen Navigation
+    
+    /// ログイン画面を表示
+    func showLoginScreen() {
+        let loginVC = LoginViewController()
+        let navController = UINavigationController(rootViewController: loginVC)
+        window?.rootViewController = navController
+    }
+    
+    /// メイン画面（タブバー）を表示
+    func showMainScreen() {
+        let tabBarController = createMainTabBarController()
+        window?.rootViewController = tabBarController
+    }
+    
+    /// メインのタブバーコントローラーを作成
+    private func createMainTabBarController() -> UITabBarController {
         // ストレス入力画面
         let stressVC = UINavigationController(rootViewController: RecordViewController())
         stressVC.tabBarItem = UITabBarItem(title: "ストレス", image: UIImage(systemName: "exclamationmark.triangle"), tag: 0)
@@ -50,17 +86,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             UITabBar.appearance().standardAppearance = appearance
             UITabBar.appearance().scrollEdgeAppearance = appearance
         }
-
-        window.rootViewController = tabBarController
-        self.window = window
-        window.makeKeyAndVisible()
         
-        // アプリ起動時にユーザー通知の許可をリクエスト
-        requestNotificationPermission()
-        
-        // 初回起動時の処理
-        performFirstLaunchSetup()
+        return tabBarController
     }
+    
+    // MARK: - Notification & Setup
     
     private func requestNotificationPermission() {
         // 通知許可のリクエスト

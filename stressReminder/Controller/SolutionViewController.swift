@@ -86,6 +86,11 @@ class SolutionViewController: UIViewController, UITextViewDelegate, UITableViewD
         loadUnresolvedStresses()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsManager.shared.logScreenView(screenName: "SolutionView")
+    }
+    
     private func loadUnresolvedStresses() {
         unresolvedStresses = stressManager.unresolvedStressEntries().sorted(by: { $0.date > $1.date })
         stressTableView.reloadData()
@@ -220,6 +225,20 @@ class SolutionViewController: UIViewController, UITextViewDelegate, UITableViewD
         
         // 未解決ストレスリストを更新
         loadUnresolvedStresses()
+        // ⭐ 解決策記録イベント
+            if let stressID = selectedStressID {
+                // ストレスに紐付けた場合
+                AnalyticsManager.shared.logSolutionRecorded(
+                    isStandalone: false,
+                    hasLinkedStress: true
+                )
+            } else {
+                // 独立した解決策の場合
+                AnalyticsManager.shared.logSolutionRecorded(
+                    isStandalone: true,
+                    hasLinkedStress: false
+                )
+            }
     }
 
     // プレースホルダ風の処理

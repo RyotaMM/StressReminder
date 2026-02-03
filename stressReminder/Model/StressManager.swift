@@ -59,27 +59,49 @@ struct StressEntry: Codable, Identifiable {
         return StressEntry(id: UUID(), date: date, type: .solution, level: nil, content: content, solution: nil)
     }
     
-    // DailyEntryに変換するメソッド（互換性のため）
-    
 }
 
 // データ管理クラス
 class StressManager {
     private let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-    private let archiveURL: URL
     
     static let shared = StressManager()
     
     private(set) var entries: [StressEntry] = []
     
+    // ⭐ ユーザーIDを取得
+    private var currentUserID: String? {
+        return AuthManager.shared.currentUserID
+    }
+    
+    // ⭐ ユーザーごとに異なるファイルパスを返す
+    private var archiveURL: URL {
+        guard let userID = currentUserID else {
+            // ログインしていない場合はデフォルトのパス
+            return documentsDirectory
+                .appendingPathComponent("stressEntries")
+                .appendingPathExtension("plist")
+        }
+        
+        // ユーザーごとにファイルを分ける
+        return documentsDirectory
+            .appendingPathComponent("stressEntries_\(userID)")
+            .appendingPathExtension("plist")
+    }
+    
     private init() {
-        archiveURL = documentsDirectory.appendingPathComponent("stressEntries").appendingPathExtension("plist")
         loadEntries()
         
         // 初回起動時にサンプルデータを追加
         if entries.isEmpty {
             addSampleData()
         }
+    }
+    
+    // ⭐ ユーザーが変わったときにデータを再読み込み
+    func reloadEntriesForCurrentUser() {
+        loadEntries()
+        NotificationCenter.default.post(name: NSNotification.Name("EntriesDidChange"), object: nil)
     }
     
     // エントリーを追加
@@ -209,7 +231,6 @@ class StressManager {
         saveEntries()
     }
     
-    // DailyEntry形式でエントリーを取得（互換性のため）
     
     
     // 日付別のエントリー数を取得（カレンダー表示用）
