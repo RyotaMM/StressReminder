@@ -60,9 +60,7 @@ struct StressEntry: Codable, Identifiable {
     }
     
     // DailyEntryに変換するメソッド（互換性のため）
-    func toDailyEntry() -> DailyEntry {
-        return DailyEntry(time: date, content: content, type: type.rawValue)
-    }
+    
 }
 
 // データ管理クラス
@@ -212,9 +210,7 @@ class StressManager {
     }
     
     // DailyEntry形式でエントリーを取得（互換性のため）
-    func getAllDailyEntries() -> [DailyEntry] {
-        return entries.map { $0.toDailyEntry() }
-    }
+    
     
     // 日付別のエントリー数を取得（カレンダー表示用）
     func entryCountForDate(_ date: Date) -> Int {

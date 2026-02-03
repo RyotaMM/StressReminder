@@ -17,7 +17,6 @@ class SettingsViewController: UIViewController, UITableViewDataSource, UITableVi
         let table = UITableView(frame: .zero, style: .grouped)
         table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         table.register(SwitchTableViewCell.self, forCellReuseIdentifier: "switchCell")
-        table.register(TimePickerTableViewCell.self, forCellReuseIdentifier: "timePickerCell")
         table.translatesAutoresizingMaskIntoConstraints = false
         return table
     }()
@@ -462,57 +461,5 @@ class SwitchTableViewCell: UITableViewCell {
     
     @objc private func switchValueChanged() {
         switchCallback?(switchControl.isOn)
-    }
-}
-
-// MARK: - TimePickerTableViewCell
-class TimePickerTableViewCell: UITableViewCell {
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let timeLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.textColor = .secondaryLabel
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter
-    }()
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupViews()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupViews() {
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(timeLabel)
-        
-        NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            
-            timeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            timeLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
-        ])
-    }
-    
-    func configure(title: String, time: Date) {
-        titleLabel.text = title
-        timeLabel.text = timeFormatter.string(from: time)
     }
 }
