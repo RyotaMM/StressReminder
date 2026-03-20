@@ -2,7 +2,6 @@
 //  NotificationManager.swift
 //  stressReminder
 //
-//  Created by Claude on 2025/04/20.
 //
 
 import Foundation
